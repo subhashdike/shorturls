@@ -1,0 +1,51 @@
+version: '3.2'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  mongodb:
+    image: 'bitnami/mongodb:4.2'
+    environment:
+      - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    ports:
+      - "${DATABASE_PORT}:27017"
+    networks:
+      - app-tier
+  backend:
+        build:
+            context: ./shortner-be/
+        depends_on:
+            - "mongodb"
+        environment:
+            - "NODE_ENV=QA"
+        env_file:
+            - .env   # pass full .env file into container.
+        expose:
+            - "5000"
+        ports:
+            - "${BACKEND_PORT}:${BACKEND_PORT}"
+        networks:
+            - app-tier
+  frontend:
+        build:
+            context: ./shortner-fe/
+            args:
+                BACKEND_PORT: "${BACKEND_PORT}"
+                BACKEND_HOST_NAME: "${BACKEND_HOST_NAME}"
+        depends_on:
+            - "backend"
+        environment:
+            - "NODE_ENV=QA"
+        env_file:
+            - .env   # pass full .env file into container.
+        expose:
+            - "5000"
+        ports:
+            - "${FRONTEND_PORT}:80"
+        networks:
+            - app-tier

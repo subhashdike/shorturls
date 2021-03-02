@@ -1,0 +1,9 @@
+{
+    "BACKEND_PORT": 5000,
+    "DBHOSTNAME": "localhost",
+    "FRONTEND_PORT": 3000,
+    "MONGODB_USERNAME": "test11",
+    "MONGODB_PASSWORD": "Welcome1",
+    "MONGODB_DATABASE": "shortner_localdb",
+    "DATABASE_PORT": 27017
+}
